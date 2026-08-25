@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPulse - PM Capstone Project & Year-Round Tax Planning Engine</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div id="app" class="flex flex-col min-h-screen">
+        <!-- Sticky Blur Header -->
+        <header>
+            <div class="container flex justify-between items-center py-4">
+                <a href="#" class="logo-container" onclick="switchMainTab('prototype'); navigateTo('landing');">
+                    <div class="logo-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="logo-text">TaxPulse</span>
+                        <span class="logo-tag">PM Capstone</span>
+                    </div>
+                </a>
+
+                <!-- Top Main Nav Tabs -->
+                <div class="nav-tabs">
+                    <button id="tab-prototype" class="nav-tab active" onclick="switchMainTab('prototype')">
+                        Interactive Prototype
+                    </button>
+                    <button id="tab-casestudy" class="nav-tab" onclick="switchMainTab('casestudy')">
+                        PRD & Pitch Deck
+                    </button>
+                </div>
+
+                <!-- Action Button -->
+                <button class="btn btn-outline btn-sm" onclick="openModal('investments')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4M12 8h.01"></path>
+                    </svg>
+                    Quick Help
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW 1: INTERACTIVE PRODUCT PROTOTYPE -->
+        <main id="view-prototype" class="container flex-grow py-8 flex flex-col justify-center">
+            
+            <!-- PAGE 1: Landing Page -->
+            <section id="page-landing" class="animate-fade-in">
+                <div class="hero-card">
+                    <div class="case-study-badge" style="margin-bottom: 1.5rem;">FinTech Product Management Project</div>
+                    <h1 class="hero-title">Year-Round Tax Planning<br><span>Made Effortless & Smart</span></h1>
+                    <p class="hero-subtitle">Stop rushing before March 31st. Calculate tax in 10 seconds, optimize your Old vs New Regime savings, and track your gamified Tax Score.</p>
+
+                    <div class="flex justify-center gap-4 mb-6" style="flex-wrap: wrap;">
+                        <button id="btn-start-planner" class="btn btn-primary text-xl" onclick="navigateTo('estimator')">
+                            Start 10-Sec Tax Planner
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 8px;">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </button>
+
+                        <button class="btn btn-outline text-xl" onclick="switchMainTab('casestudy')">
+                            View PM Case Study (PRD)
+                        </button>
+                    </div>
+
+                    <!-- Highlights Banner -->
+                    <div class="grid grid-cols-3 gap-4 mt-8 text-left" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                        <div class="card" style="padding: 1.25rem;">
+                            <div class="text-primary font-bold text-lg mb-1">⚡ 10-Second Estimator</div>
+                            <p class="text-sm text-muted">Instant tax liability calculation based on income slabs & regime math.</p>
+                        </div>
+                        <div class="card" style="padding: 1.25rem;">
+                            <div class="text-success font-bold text-lg mb-1">🎯 Tax Score Engine</div>
+                            <p class="text-sm text-muted">Gamified 0–100 progress score showing exact steps to maximize savings.</p>
+                        </div>
+                        <div class="card" style="padding: 1.25rem;">
+                            <div class="text-secondary font-bold text-lg mb-1">💡 Smart Regime Matcher</div>
+                            <p class="text-sm text-muted">Deep comparison of Old vs New regime deductions (80C, 80D, HRA).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE 2: Quick Estimator -->
+            <section id="page-estimator" class="hidden animate-fade-in">
+                <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                    <button class="btn-back" onclick="goBack('landing')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+
+                    <h2 class="text-3xl font-bold mb-2">Quick Tax Estimator</h2>
+                    <p class="text-muted mb-6">Estimate your tax liability and potential savings in under 10 seconds.</p>
+
+                    <form id="form-estimator" onsubmit="event.preventDefault(); calculateAndNavigate();">
+                        
+                        <!-- Salary Range Slider -->
+                        <div class="form-group">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="form-label" style="margin-bottom: 0;">Annual Salary / Income</label>
+                                <span id="salary-display" class="range-value">₹ 12,00,000</span>
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="input-salary" min="300000" max="5000000" step="50000" value="1200000">
+                                <div class="flex justify-between text-muted text-xs mt-1">
+                                    <span>₹3 Lakhs</span>
+                                    <span>₹25 Lakhs</span>
+                                    <span>₹50 Lakhs+</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Age Category -->
+                        <div class="form-group">
+                            <label class="form-label">Age Group</label>
+                            <select class="form-select" id="input-age">
+                                <option value="gen">Below 60 years (General Taxpayer)</option>
+                                <option value="sen">60 to 80 years (Senior Citizen)</option>
+                                <option value="sup">Above 80 years (Super Senior Citizen)</option>
+                            </select>
+                        </div>
+
+                        <!-- City Category -->
+                        <div class="form-group">
+                            <label class="form-label">City Category (for HRA Exemption)</label>
+                            <select class="form-select" id="input-city">
+                                <option value="metro">Metro (Mumbai, Delhi, Bengaluru, Chennai, Kolkata - 50% HRA cap)</option>
+                                <option value="non-metro">Non-Metro (Other cities - 40% HRA cap)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary text-xl w-full mt-4">
+                            Calculate Estimated Tax
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- PAGE 3: Initial Results -->
+            <section id="page-results" class="hidden animate-fade-in">
+                <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center; position: relative;">
+                    <button class="btn-back" onclick="goBack('estimator')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+                    <h2 class="text-3xl font-bold mb-6">Estimated Tax Summary</h2>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Estimated Tax Liability</div>
+                        <div class="stat-value" id="result-tax">₹ 0</div>
+                    </div>
+
+                    <div class="stat-card" style="border-color: var(--color-success); background: #f0fdf4;">
+                        <div class="stat-label text-success">Potential Additional Savings</div>
+                        <div class="stat-value highlight" id="result-savings">₹ 0</div>
+                    </div>
+
+                    <div class="score-container">
+                        <h3 class="text-xl mb-2 font-bold">Tax Efficiency Score</h3>
+                        <div class="circular-progress" id="score-circle">
+                            <div class="score-content">
+                                <span class="score-value" id="result-score">20</span>
+                                <span class="score-label">/ 100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted mb-6">Your tax profile is currently incomplete. Fill in deductions to unlock maximum tax savings.</p>
+
+                    <button class="btn btn-primary text-xl w-full" onclick="navigateTo('profile')">
+                        Improve My Tax Score
+                    </button>
+                </div>
+            </section>
+
+            <!-- PAGE 4: Progressive Profile Completion -->
+            <section id="page-profile" class="hidden animate-fade-in">
+                <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center; position: relative;">
+                    <button class="btn-back" onclick="goBack('results')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+
+                    <h2 class="text-3xl font-bold mb-2">Complete Tax Profile</h2>
+                    <p class="text-muted mb-4">Select items to declare details and maximize your score.</p>
+
+                    <div class="checklist-container">
+                        <!-- Salary (Done) -->
+                        <div class="checklist-item checked">
+                            <div class="checklist-checkbox">✓</div>
+                            <span class="font-medium text-base">Salary details (Provided)</span>
+                        </div>
+
+                        <!-- Rent / HRA -->
+                        <div class="checklist-item" id="item-rent" onclick="openModal('rent')">
+                            <div class="checklist-checkbox" onclick="handleCheckboxClick('rent', event)">
+                                <svg class="check-icon hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <span class="font-medium text-base">Rent Paid & HRA Exemption</span>
+                        </div>
+
+                        <!-- 80C Investments -->
+                        <div class="checklist-item" id="item-investments" onclick="openModal('investments')">
+                            <div class="checklist-checkbox" onclick="handleCheckboxClick('investments', event)">
+                                <svg class="check-icon hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <span class="font-medium text-base">Section 80C Investments (ELSS / PPF / EPF / NPS)</span>
+                        </div>
+
+                        <!-- 80D Health Insurance -->
+                        <div class="checklist-item" id="item-insurance" onclick="openModal('insurance')">
+                            <div class="checklist-checkbox" onclick="handleCheckboxClick('insurance', event)">
+                                <svg class="check-icon hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <span class="font-medium text-base">Section 80D Health Insurance Premiums</span>
+                        </div>
+
+                        <!-- Other Deductions -->
+                        <div class="checklist-item" id="item-other" onclick="openModal('other')">
+                            <div class="checklist-checkbox" onclick="handleCheckboxClick('other', event)">
+                                <svg class="check-icon hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <span class="font-medium text-base">Home Loan Interest 24(b) & Other Exemption</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-section mb-6">
+                        <div class="flex justify-between text-sm font-semibold mb-2">
+                            <span>Profile Strength</span>
+                            <span id="progress-text">1 of 5 completed</span>
+                        </div>
+                        <div style="background: #e2e8f0; height: 8px; border-radius: 999px; overflow: hidden;">
+                            <div class="progress-fill" id="progress-bar" style="width: 20%; height: 100%; background: var(--color-primary); transition: width 0.4s ease;"></div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary text-xl w-full" onclick="navigateTo('income')">
+                        Next: Add Income Streams
+                    </button>
+                </div>
+            </section>
+
+            <!-- PAGE 5: Multi-Income Input -->
+            <section id="page-income" class="hidden animate-fade-in">
+                <div class="card" style="max-width: 700px; margin: 0 auto; text-align: center; position: relative;">
+                    <button class="btn-back" onclick="goBack('profile')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+
+                    <h2 class="text-3xl font-bold mb-2">Multi-Income Stream Tracker</h2>
+                    <p class="text-muted mb-6">Include all income sources for complete tax optimization.</p>
+
+                    <div class="income-grid">
+                        <div class="income-card">
+                            <div class="text-left">
+                                <h4 class="font-bold">Salaried Income</h4>
+                                <span class="text-xs text-muted">Primary Job</span>
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="navigateTo('estimator')">Edit</button>
+                        </div>
+                        <div class="income-card">
+                            <div class="text-left">
+                                <h4 class="font-bold">Freelance / Gig</h4>
+                                <span class="text-xs text-muted">Consulting / Side Hustle</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="openModal('freelance')">Add / Edit</button>
+                        </div>
+                        <div class="income-card">
+                            <div class="text-left">
+                                <h4 class="font-bold">Rental Income</h4>
+                                <span class="text-xs text-muted">House Property</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="openModal('rental_income')">Add / Edit</button>
+                        </div>
+                        <div class="income-card">
+                            <div class="text-left">
+                                <h4 class="font-bold">Capital Gains</h4>
+                                <span class="text-xs text-muted">Stocks / Mutual Funds</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="openModal('capital_gains')">Add / Edit</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary text-xl w-full mt-4" onclick="calculateTotalAndShowInsights()">
+                        Recalculate Tax & Generate Insights
+                    </button>
+                </div>
+            </section>
+
+            <!-- PAGE 5.5: Optimized Results -->
+            <section id="page-optimized-results" class="hidden animate-fade-in">
+                <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center; position: relative;">
+                    <button class="btn-back" onclick="goBack('income')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+
+                    <h2 class="text-3xl font-bold mb-4">Optimized Tax Calculation</h2>
+
+                    <!-- Calculation Breakdown Card -->
+                    <div style="text-align: left; margin-bottom: 1.5rem; background: var(--color-bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-muted">Total Gross Income</span>
+                            <span id="opt-gross" class="font-bold">₹ 0</span>
+                        </div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-muted">Total Deductions Applied</span>
+                            <span id="opt-deductions" class="text-success font-bold">- ₹ 0</span>
+                        </div>
+                        <div class="flex justify-between text-sm mt-2 pt-2" style="border-top: 1px solid var(--color-border);">
+                            <span class="font-bold">Net Taxable Income</span>
+                            <span id="opt-taxable" class="font-bold text-primary">₹ 0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Optimized Final Tax Liability</div>
+                        <div class="stat-value" id="opt-tax">₹ 0</div>
+                    </div>
+
+                    <div class="stat-card" style="border-color: var(--color-success); background: #f0fdf4;">
+                        <div class="stat-label text-success">Total Tax Saved</div>
+                        <div class="stat-value highlight" id="opt-savings">₹ 0</div>
+                    </div>
+
+                    <div class="score-container">
+                        <h3 class="text-xl mb-2 font-bold">Optimization Tax Score</h3>
+                        <div class="circular-progress" id="opt-score-circle">
+                            <div class="score-content">
+                                <span class="score-value" id="opt-score">0</span>
+                                <span class="score-label">/ 100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary text-xl w-full" onclick="renderInsightsAndNavigate()">
+                        View Actionable Insights
+                    </button>
+                </div>
+            </section>
+
+            <!-- PAGE 6: Personalized Insights -->
+            <section id="page-insights" class="hidden animate-fade-in">
+                <div class="card" style="max-width: 750px; margin: 0 auto; text-align: center; position: relative;">
+                    <button class="btn-back" onclick="goBack('optimized-results')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+
+                    <h2 class="text-3xl font-bold mb-2">Personalized Tax Recommendations</h2>
+                    <p class="text-muted mb-6">Tailored action cards to maximize your tax savings before year end.</p>
+
+                    <!-- Container for insights -->
+                    <div id="insights-container" class="mb-6"></div>
+
+                    <!-- Embedded AI Tax Assistant Widget -->
+                    <div class="chat-container text-left mt-6">
+                        <div class="chat-header">
+                            <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                            <span class="font-bold">TaxPulse AI Assistant</span>
+                        </div>
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-bubble bot">
+                                Hello! I'm your AI Tax Advisor. Ask me anything about 80C investments, HRA calculations, or Old vs New Regime choices.
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input" class="form-input" placeholder="Type a tax question..." onkeypress="if(event.key === 'Enter') sendChatMessage();">
+                            <button class="btn btn-primary btn-sm" onclick="sendChatMessage()">Ask</button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 mt-6">
+                        <button class="btn btn-outline w-full" onclick="navigateTo('landing')">
+                            Restart Planner
+                        </button>
+                        <button class="btn btn-primary w-full" onclick="alert('Tax report summary copied to clipboard!')">
+                            Export Tax Summary
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- MAIN VIEW 2: PRODUCT MANAGEMENT CASE STUDY & PRD SHOWCASE -->
+        <main id="view-casestudy" class="container flex-grow py-8 hidden">
+            <!-- Hero Banner -->
+            <div class="case-study-hero">
+                <span class="case-study-badge">Capstone Project Artifacts</span>
+                <h1 class="case-study-title">TaxPulse: Product Management Case Study & PRD Showcase</h1>
+                <p style="opacity: 0.9; max-width: 750px;">A comprehensive product breakdown, requirements document (PRD), competitor matrix, and pitch deck for a continuous, year-round tax planning engine for Indian salaried professionals.</p>
+            </div>
+
+            <!-- Sub Navigation Tabs -->
+            <div class="sub-nav-tabs">
+                <button id="subtab-prd" class="sub-nav-btn active" onclick="switchSubTab('prd')">Product Requirement Document (PRD)</button>
+                <button id="subtab-slides" class="sub-nav-btn" onclick="switchSubTab('slides')">Pitch Deck Slides</button>
+                <button id="subtab-metrics" class="sub-nav-btn" onclick="switchSubTab('metrics')">Metrics & AARRR Framework</button>
+                <button id="subtab-gtm" class="sub-nav-btn" onclick="switchSubTab('gtm')">Go-To-Market & Prioritization</button>
+            </div>
+
+            <!-- TAB 1: PRD DOCUMENT -->
+            <div id="case-sec-prd" class="animate-fade-in">
+                <div class="doc-section">
+                    <h2 class="doc-h2">1. Executive Summary & Problem Statement</h2>
+                    <p class="mb-4">Most Indian taxpayers fail to optimize their taxes because planning is complex, jargon-heavy, and treated as a last-minute chore in March. Existing apps focus strictly on filing tax returns rather than offering continuous, year-round guidance.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-4 mb-4">
+                        <div style="background: var(--color-bg); padding: 1rem; border-radius: 8px;">
+                            <h4 class="font-bold text-danger mb-1">Core Pain Points</h4>
+                            <ul style="padding-left: 1.25rem; font-size: 0.9rem;" class="text-muted">
+                                <li>Tax concepts are intimidating for young earners (22–32).</li>
+                                <li>Planning happens only during filing season (Feb–March).</li>
+                                <li>No feedback loop showing "what action to take next".</li>
+                                <li>Tools prioritize compliance over learning and habit building.</li>
+                            </ul>
+                        </div>
+                        <div style="background: var(--color-bg); padding: 1rem; border-radius: 8px;">
+                            <h4 class="font-bold text-success mb-1">TaxPulse Solution</h4>
+                            <ul style="padding-left: 1.25rem; font-size: 0.9rem;" class="text-muted">
+                                <li>10-second Quick Tax Estimator for instant clarity.</li>
+                                <li>Gamified 0–100 Tax Score to drive continuous engagement.</li>
+                                <li>Personalized insights for 80C, 80D, HRA, and regime match.</li>
+                                <li>Amendments feature to adjust for life events year-round.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-section">
+                    <h2 class="doc-h2">2. Competitive Landscape Analysis</h2>
+                    <table class="regime-table">
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Key Strength</th>
+                                <th>Critical Gap / Opportunity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-bold">ClearTax</td>
+                                <li>Strong filing expertise & CA connect</li>
+                                <td>Seasonal tool only; weak in year-round engagement</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">INDmoney</td>
+                                <li>Capital gains tracking & broker sync</li>
+                                <td>Overwhelming UX; lacks beginner-friendly tax guidance</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">ET Money</td>
+                                <li>80C planning & financial literacy</li>
+                                <td>Generic recommendations; no gamified tax score</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">Quicko</td>
+                                <li>Advanced trader & freelancer support</li>
+                                <td>Not mainstream; high friction for simple salaried users</td>
+                            </tr>
+                            <tr class="recommended">
+                                <td class="font-bold text-primary">TaxPulse (Us)</td>
+                                <li>Continuous, gamified tax optimization</li>
+                                <td>First product offering year-round nudges + 10-sec estimator</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="doc-section">
+                    <h2 class="doc-h2">3. Product Requirements (Must-Have vs Nice-to-Have)</h2>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="doc-h3 text-primary">Phase 1: Must-Have MVP Features</h3>
+                            <ol style="padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.6;" class="text-muted">
+                                <li><strong>Quick Tax Estimator:</strong> 10-second calculator for salary, age, and city.</li>
+                                <li><strong>Gamified Tax Score (0-100):</strong> Dynamic score driving profile completeness.</li>
+                                <li><strong>Personalized Tax Insights:</strong> Auto-generated suggestions for 80C, HRA, 80D.</li>
+                                <li><strong>Amendments & Adjustments Engine:</strong> Reflect mid-year salary changes or investments.</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="doc-h3 text-secondary">Phase 2: Nice-to-Have Features</h3>
+                            <ol style="padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.6;" class="text-muted">
+                                <li><strong>Form 16 / AIS Auto-Import:</strong> OCR document parsing to auto-fill details.</li>
+                                <li><strong>Multi-Income Stream Tracker:</strong> Salary + Freelance + Rental + Capital Gains.</li>
+                                <li><strong>AI Tax Assistant Chatbot:</strong> In-app instant query resolution.</li>
+                                <li><strong>Contextual Monetization:</strong> Seamless cross-sell of ELSS & Insurance.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PITCH DECK SLIDES -->
+            <div id="case-sec-slides" class="hidden animate-fade-in">
+                <div class="doc-section">
+                    <h2 class="doc-h2">Capstone Presentation Pitch Deck</h2>
+                    <p class="text-muted mb-6">Interactive slide deck walkthrough based on the presentation submitted for the Product Management Capstone.</p>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="card" style="padding: 1.25rem;">
+                            <span class="text-xs font-bold text-primary">SLIDE 1 & 2</span>
+                            <h3 class="font-bold text-lg mt-1">The Problem: Seasonal & Complex</h3>
+                            <p class="text-sm text-muted mt-2">Indian taxpayers fail to optimize tax because planning is jargon-heavy, delayed until March, and lacks feedback loops.</p>
+                        </div>
+                        <div class="card" style="padding: 1.25rem;">
+                            <span class="text-xs font-bold text-primary">SLIDE 3 & 4</span>
+                            <h3 class="font-bold text-lg mt-1">Target Persona & Competitor Gap</h3>
+                            <p class="text-sm text-muted mt-2">Targeting early & mid-career salaried professionals (22–32). No existing app offers continuous guided tax planning.</p>
+                        </div>
+                        <div class="card" style="padding: 1.25rem;">
+                            <span class="text-xs font-bold text-primary">SLIDE 5 & 6</span>
+                            <h3 class="font-bold text-lg mt-1">Taxly Product System</h3>
+                            <p class="text-sm text-muted mt-2">Core flywheel: Value (10-sec estimator) ➔ Engagement (Tax Score) ➔ Data (Profile) ➔ Monetization (ELSS / Insurance).</p>
+                        </div>
+                        <div class="card" style="padding: 1.25rem;">
+                            <span class="text-xs font-bold text-primary">SLIDE 7 & 8</span>
+                            <h3 class="font-bold text-lg mt-1">Metrics & Prototype Link</h3>
+                            <p class="text-sm text-muted mt-2">Acquisition, Engagement, Data, and Monetization KPIs tracking module activation and retention.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: METRICS & AARRR -->
+            <div id="case-sec-metrics" class="hidden animate-fade-in">
+                <div class="doc-section">
+                    <h2 class="doc-h2">Business Goals & AARRR Metric Framework</h2>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="card" style="padding: 1.5rem;">
+                            <h3 class="font-bold text-primary mb-2">1. Acquisition KPIs</h3>
+                            <ul style="padding-left: 1.2rem; font-size: 0.9rem;" class="text-muted">
+                                <li><strong>Module Activation:</strong> 20% of app MAU try Tax Module within 30 days.</li>
+                                <li><strong>CTR:</strong> Click-through rate on tax planner banner > 15%.</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="padding: 1.5rem;">
+                            <h3 class="font-bold text-success mb-2">2. Engagement KPIs</h3>
+                            <ul style="padding-left: 1.2rem; font-size: 0.9rem;" class="text-muted">
+                                <li><strong>Weekly Retention:</strong> 30% WAU for users viewing tax insights.</li>
+                                <li><strong>Tax Score Completion:</strong> > 40% complete setup.</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="padding: 1.5rem;">
+                            <h3 class="font-bold text-warning mb-2">3. Data Depth KPIs</h3>
+                            <ul style="padding-left: 1.2rem; font-size: 0.9rem;" class="text-muted">
+                                <li><strong>Profile Completeness:</strong> 40% add salary + rent + 80C details.</li>
+                                <li><strong>Form 16 Uploads:</strong> > 25% conversion on document import.</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="padding: 1.5rem;">
+                            <h3 class="font-bold text-secondary mb-2">4. Monetization KPIs</h3>
+                            <ul style="padding-left: 1.2rem; font-size: 0.9rem;" class="text-muted">
+                                <li><strong>Tax Savings Products:</strong> 5–8% conversion to ELSS/NPS funds.</li>
+                                <li><strong>Insurance & Advisory:</strong> 2–4% conversion to health insurance/CA filing.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: GTM & PRIORITIZATION -->
+            <div id="case-sec-gtm" class="hidden animate-fade-in">
+                <div class="doc-section">
+                    <h2 class="doc-h2">RICE Prioritization Matrix</h2>
+                    <table class="regime-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Reach</th>
+                                <th>Impact</th>
+                                <th>Confidence</th>
+                                <th>Effort</th>
+                                <th>RICE Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="recommended">
+                                <td class="font-bold">10-Sec Quick Tax Estimator</td>
+                                <td>10/10</td>
+                                <td>9/10</td>
+                                <td>90%</td>
+                                <td>2 weeks</td>
+                                <td class="font-bold text-primary">40.5 (Phase 1)</td>
+                            </tr>
+                            <tr class="recommended">
+                                <td class="font-bold">Gamified Tax Efficiency Score</td>
+                                <td>9/10</td>
+                                <td>8/10</td>
+                                <td>85%</td>
+                                <td>2 weeks</td>
+                                <td class="font-bold text-primary">30.6 (Phase 1)</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">Personalized 80C & HRA Insights</td>
+                                <td>8/10</td>
+                                <td>8/10</td>
+                                <td>80%</td>
+                                <td>3 weeks</td>
+                                <td class="font-bold">17.0 (Phase 1)</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">Form 16 OCR Auto-Import</td>
+                                <td>6/10</td>
+                                <td>9/10</td>
+                                <td>70%</td>
+                                <td>6 weeks</td>
+                                <td class="font-bold">6.3 (Phase 2)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- MODALS -->
+        <div id="modal-overlay" class="modal-overlay" onclick="if(event.target === this) closeModal();">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3 id="modal-title" class="font-bold text-xl">Details</h3>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="border-top: 1px solid var(--color-border); background: var(--color-surface); padding: 1.5rem 0;" class="mt-8">
+            <div class="container flex justify-between items-center text-xs text-muted">
+                <div>
+                    <strong>TaxPulse</strong> &bull; Product Management Capstone Project
+                </div>
+                <div>
+                    Deployed on GitHub Pages &bull; Free & Open Source
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
